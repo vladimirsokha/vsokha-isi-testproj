@@ -8,44 +8,26 @@
     <div class="input-wrap">
       <label for="username">Username*</label>
       <div class="input-tag-wrap">
-        <input name="username" type="text" formControlName="username">
+        <input name="username" type="text" appUserFormValidator [fieldName]="'Username'" formControlName="username">
       </div>
-      <div class="error" *ngIf="userForm.get('username')?.errors?.['uniqueUsername']">Username must be unique.</div>
     </div>
     <div class="input-wrap">
       <label for="email">First name*</label>
       <div class="input-tag-wrap">
-        <input type="text" formControlName="first_name">
+        <input type="text" appUserFormValidator [fieldName]="'First name'" formControlName="first_name" >
       </div>
-      <div class="error" *ngIf="userForm.get('first_name')?.errors?.['required']">First name required.</div>
     </div>
     <div class="input-wrap">
       <label for="email">Last name*</label>
       <div class="input-tag-wrap">
-        <input type="text" formControlName="last_name">
+        <input type="text" appUserFormValidator [fieldName]="'Last name'" formControlName="last_name">
       </div>
-      <div class="error" *ngIf="userForm.get('last_name')?.errors?.['required']">First name required.</div>
     </div>
     <div class="input-wrap">
       <label for="email">Email*</label>
       <div class="input-tag-wrap">
-        <input type="text" formControlName="email">
+        <input type="text" appUserFormValidator [fieldName]="'Email'" formControlName="email">
       </div>
-      <div class="error" *ngIf="userForm.get('email')?.errors?.['invalidEmail']">Invalid email address.</div>
-    </div>
-    <div class="input-wrap">
-      <label for="email">Password*</label>
-      <div class="input-tag-wrap">
-        <input type="password" formControlName="password">
-      </div>
-      <div *ngIf="userForm.get('password')?.errors?.['pattern']">Password must be at least 8 characters long and contain at least one number and one letter.</div>
-    </div>
-    <div class="input-wrap">
-      <label for="email">Repeat password*</label>
-      <div class="input-tag-wrap">
-        <input type="password" formControlName="password">
-      </div>
-      <div *ngIf="userForm.get('password')?.errors?.['pattern']">Passwords don't match.</div>
     </div>
     <div class="input-wrap">
       <label for="email">Type*</label>
@@ -54,7 +36,19 @@
           <option *ngFor="let type of userTypeEnum | keyvalue" [value]="type.value">{{type.value}}</option>
         </select>
       </div>
-      <div *ngIf="userForm.get('user_type')?.errors?.['invalidUserType']">Invalid user type.</div>
+    </div>
+    <div class="input-wrap">
+      <label for="email">Password*</label>
+      <div class="input-tag-wrap">
+        <input type="password" appUserFormValidator [fieldName]="'Password'" formControlName="password">
+      </div>
+    </div>
+    <div class="input-wrap">
+      <label for="email">Repeat password*</label>
+      <div class="input-tag-wrap">
+        <input type="password" appUserFormValidator [fieldName]="'Repeat password'" formControlName="repeat_password">
+      </div>
+      <div class="error" *ngIf="userForm.hasError('notSame') && userForm.get('repeat_password')!.touched">Passwords don't match</div>
     </div>
   </form>
   <div class="user-buttons-row around" *ngIf="userId === 'new'">

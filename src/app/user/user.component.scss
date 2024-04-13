@@ -9,7 +9,6 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
     .user-header {
         display: inline-flex;
@@ -29,6 +28,8 @@
     form {
         display: flex;
         flex-direction: column;
+        margin-top: 20px;
+        margin-bottom: auto;
         gap: 16px;
 
         .input-wrap {

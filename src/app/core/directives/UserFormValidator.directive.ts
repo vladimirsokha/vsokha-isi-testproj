@@ -1,43 +1,67 @@
-import { Directive, Input } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy } from '@angular/core';
 import { NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
-import { UserTypeEnum } from '../enums/user-type.enum';
 import { UserService } from '../services/user.service';
-import { IUser } from '../models/user';
+import { Subscription } from 'rxjs';
 
 @Directive({
   selector: '[appUserFormValidator]',
   providers: [{ provide: NG_VALIDATORS, useExisting: UserFormValidatorDirective, multi: true }],
   standalone: true
 })
-export class UserFormValidatorDirective implements Validator {
+export class UserFormValidatorDirective implements Validator, OnDestroy {
 
-  constructor(private userService: UserService) {}
+  @Input() fieldName: string = '';
 
-  validate(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-    const errors: ValidationErrors = {};
+  statusChangeSubscription: Subscription | undefined;
+  constructor(
+    private userService: UserService,
+    private elRef: ElementRef
+  ) {}
 
-    // Validate username (unique)
-    console.log(control.value);
-    console.log(control.value.username);
-    if (value.username) {
-      const allUsers = this.userService.getAllUsers();
-      const isUsernameTaken = allUsers.some((user: IUser) => user.username === value.username);
-      if (isUsernameTaken) {
-        errors['uniqueUsername'] = true;
+  ngOnDestroy(): void {
+    this.removeError();
+  }
+
+  validate(control: AbstractControl): null {
+    console.log(control)
+    this.statusChangeSubscription = control!.statusChanges!.subscribe(
+      (status) => {
+        if (status == 'INVALID') {
+          this.showError(control);
+        } else {
+          this.removeError();
+        }
       }
-    }
+    )
+    return null;
+  }
 
-    // Validate email
-    if (value.email && !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value.email)) {
-      errors['invalidEmail'] = true;
-    }
+  private showError(control: AbstractControl) {
+    this.removeError();
+    const valErrors: ValidationErrors = control!.errors as ValidationErrors;
+    let text = '';
 
-    // Validate password (min length 8, at least one number and one letter)
-    if (value.password && !(/(?=.*\d)(?=.*[a-zA-Z]).{8,}/).test(value.password)) {
-      errors['invalidPassword'] = true;
-    }
+    Object.keys(valErrors).forEach(error => {
+      switch (error) {
+        case 'required':
+          text += this.fieldName + ' required. ';
+          break;
+        case 'email': 
+          text += this.fieldName + ' must be valid. '
+          break;
+        case 'pattern':
+          text += 'Password must be strong (8 characters, at least one number and one letter)'
+          break;
+        case 'usernameExists':
+          text += 'Username already exists';
+      }
+    })
+    const errSpan = `<div style="font: normal normal normal 13px/16px Helvetica; color: #EF7DA0;" id="${this.fieldName.trim()}">${text}</div>`;
+    this.elRef.nativeElement.parentElement.parentElement.insertAdjacentHTML('beforeend', errSpan);
+  }
 
-    return Object.keys(errors).length ? errors : null;
+  private removeError(): void {
+    const errorElement = document.getElementById(this.fieldName);
+    if (errorElement) errorElement.remove();
   }
 }

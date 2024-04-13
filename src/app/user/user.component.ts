@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, forwardRef } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { UserService } from '../core/services/user.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IUser } from '../core/models/user';
 import { UserFormValidatorDirective } from '../core/directives/UserFormValidator.directive';
 import { CommonModule } from '@angular/common';
@@ -10,46 +10,79 @@ import { ButtonEnum } from '../core/enums/button.enum';
 import { MessageService } from '../core/services/message.service';
 import { MessageEnum } from '../core/enums/message.enum';
 import { UserTypeEnum } from '../core/enums/user-type.enum';
-
+import { checkPasswords } from '../core/validators/passwordMatch.validator';
+import { Observable, Subscription, of } from 'rxjs';
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UserFormValidatorDirective, ButtonComponent, RouterModule]
+  imports: [CommonModule, ReactiveFormsModule, UserFormValidatorDirective, ButtonComponent, RouterModule],
+  providers: [
+    { 
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: forwardRef(() => UserComponent),
+    }]
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
 
   buttonEnum = ButtonEnum;
   userTypeEnum = UserTypeEnum;
   userId: string | 'new' = 'new';
-  userForm!: FormGroup;
+  userForm: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    first_name: [ '', Validators.required],
+    last_name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)]],
+    repeat_password: [''],
+    user_type: [null, Validators.required]
+  });
 
+  usersList: IUser[] = [];
+  subscriptions: Subscription[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) { }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.userId = params['id']; 
       if (this.userId !== 'new') {
-        this.initForm(this.userService.getUserById(parseInt(this.userId)));
-        console.log(this.userForm.value);
+        const user = this.userService.getUserById(parseInt(this.userId));
+        if (user) {
+          this.initForm(this.userService.getUserById(parseInt(this.userId)));
+        } else {
+          this.router.navigate(['/new']);
+          this.messageService.messageSubject.next({type: MessageEnum.ERROR, message: 'Error! User doesn\'t exist.'});
+        }
       } else {
         this.initForm();
       }
     });
+    this.subscriptions.push(
+      this.userService.users$.subscribe(res => {
+        this.usersList = res;
+      })
+    );
   }
 
   createUser(): void {
+    console.log(this.userForm);
     if (this.userForm.valid) {
-      this.userService.addUser(this.generateUserPayload());
+      const userId = this.userService.addUser(this.generateUserPayload());
       this.messageService.messageSubject.next({type: MessageEnum.SUCCESS, message: 'Success! User added.'});
-      this.userForm.reset();
+      this.router.navigate([`/${userId}`]);
     } else {
       this.messageService.messageSubject.next({type: MessageEnum.ERROR, message: 'Error! User data is not valid.'});
     }
@@ -60,7 +93,6 @@ export class UserComponent implements OnInit {
     if (this.userForm.valid) {
       this.userService.updateUser(this.generateUserPayload());
       this.messageService.messageSubject.next({type: MessageEnum.SUCCESS, message: 'Success! User updated.'});
-      this.userForm.reset();
     } else {
       this.messageService.messageSubject.next({type: MessageEnum.ERROR, message: 'Error! User data is not valid.'});
     }
@@ -70,7 +102,7 @@ export class UserComponent implements OnInit {
   deleteUser(): void {
     this.userService.deleteUser(parseInt(this.userId));
     this.messageService.messageSubject.next({type: MessageEnum.SUCCESS, message: 'Success! User deleted.'});
-    this.userForm.reset();
+    this.router.navigate([`/`]);
   }
 
   private generateUserPayload(): IUser {
@@ -88,12 +120,18 @@ export class UserComponent implements OnInit {
 
   private initForm(userData?: IUser): void {
     this.userForm = this.formBuilder.group({
-      username: [userData ? userData.username : '', Validators.required],
+      username: [userData ? userData.username : '', Validators.required, this.checkUniqieName],
       first_name: [userData ? userData.first_name : '', Validators.required],
       last_name: [userData ? userData.last_name : '', Validators.required],
       email: [userData ? userData.email : '', [Validators.required, Validators.email]],
-      password: [userData ? userData.password : '', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)]],
+      password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)]],
+      repeat_password: [''],
       user_type: [userData ? userData.user_type : null, Validators.required]
-    });
+    }, {validators: checkPasswords});
+  }
+
+  checkUniqieName: ValidatorFn = (group: AbstractControl):  Observable<ValidationErrors|null> => { 
+    console.log(this.usersList.some(user => user.username === this.userForm.get('username')?.value));
+    return this.usersList.some(user => user.username === this.userForm.get('username')?.value) ? of({ usernameExists: true }) :  of(null)
   }
 }
