@@ -1,8 +1,82 @@
 .user-wrapper {
     width: 100%;
-    height: 711px;
+    height: 730px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 0px 0px 30px #523F690D;
     border: 1px solid #EBEDF3;
     border-radius: 6px;
+    padding: 26px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .user-header {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .title {
+            font: normal normal bold 16px/19px Helvetica;
+            color: #3F4254;
+        }
+
+        img {
+            cursor: pointer;
+        }
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .input-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            
+            label {
+                font: normal normal normal 13px/16px Helvetica;
+                color: #3F4254;
+            }
+
+            .input-tag-wrap {
+                width: 100%;
+                display: flex;
+                background: #F3F6F9 0% 0% no-repeat padding-box;
+                border-radius: 6px;
+
+                padding: 16px;
+                box-sizing: border-box;
+
+                input, select {
+                    background-color: transparent;
+                    border: none;
+                    width: 100%;
+                    height: 13px;
+                    &:focus {
+                        outline: none;
+                    }
+                }
+            }
+            
+            .error {
+                font: normal normal normal 13px/16px Helvetica;
+                color: #EF7DA0;
+            }
+        }
+    }
+
+    .user-buttons-row {
+        display: flex;
+
+        &.around {
+            justify-content: space-around;
+        }
+
+        &.between {
+            justify-content: space-between;
+        }
+    }
 }

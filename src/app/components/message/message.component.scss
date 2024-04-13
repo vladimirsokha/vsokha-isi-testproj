@@ -1,13 +1,16 @@
 .message-wrapper {
     width: 281px;
     height: 56px;
-    padding: 22px 25px 21px;
     border-radius: 6px;
+    padding: 0 26px;
     box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: left;
     color: #FFFFFF;
     font: normal normal normal 13px/16px Helvetica;
+    opacity: 0;
+    transition: 0.3s ease-in-out;
 
     &.success {
         background: #66BB6A 0% 0% no-repeat padding-box;

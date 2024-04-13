@@ -5,6 +5,8 @@ import { MessageEnum } from './core/enums/message.enum';
 import { ButtonComponent } from './components/button/button.component';
 import { routes } from './app.routes';
 import { TableComponent } from './table/table.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { UserFormValidatorDirective } from './core/directives/UserFormValidator.directive';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,7 @@ import { TableComponent } from './table/table.component';
     RouterModule,
     MessageComponent,
     ButtonComponent,
-    TableComponent
+    TableComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

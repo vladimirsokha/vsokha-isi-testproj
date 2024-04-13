@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MessageService } from '../../core/services/message.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { MessageEnum } from '../../core/enums/message.enum';
   imports: [CommonModule]
 })
 export class MessageComponent implements OnInit, OnDestroy {
+  @ViewChild('messageWrapper') divElementRef!: ElementRef;
 
   @Input() type: MessageEnum = MessageEnum.SUCCESS;
 
@@ -26,7 +27,11 @@ export class MessageComponent implements OnInit, OnDestroy {
       this.messageService.message$.subscribe(event => {
         if (!event) {return;}
         if (event.type === this.type) {
+          this.divElementRef.nativeElement.style.opacity = 1;
           this.messageText = event.message;
+          setTimeout(() => {
+            this.divElementRef.nativeElement.style.opacity = 0;
+          }, 3000);
         }
       })
     )
