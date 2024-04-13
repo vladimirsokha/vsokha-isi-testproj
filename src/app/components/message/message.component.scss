@@ -1,0 +1,21 @@
+.message-wrapper {
+    width: 281px;
+    height: 56px;
+    padding: 22px 25px 21px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box; 
+    color: #FFFFFF;
+    font: normal normal normal 13px/16px Helvetica;
+
+    &.success {
+        background: #66BB6A 0% 0% no-repeat padding-box;
+        box-shadow: 0px 10px 15px #4CAF505C;
+    }
+
+    &.error {
+        background: #EF7DA0 0% 0% no-repeat padding-box;
+        box-shadow: 0px 10px 15px #EF7DA05C;
+    }
+}

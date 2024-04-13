@@ -1,0 +1,18 @@
+<div class="datatable-wrapper">
+  <div class="datatable-header">
+    <div class="column username">username</div>
+    <div class="column first_name">first name</div>
+    <div class="column last_name">last name</div>
+    <div class="column email">email</div>
+    <div class="column type">type</div>
+  </div>
+  <div class="datatable-data">
+    <div class="row" *ngFor="let user of users" [routerLink]="'/' + user.id">
+      <div class="column username">{{user.username}}</div>
+      <div class="column first_name">{{user.first_name}}</div>
+      <div class="column last_name">{{user.last_name}}</div>
+      <div class="column email">{{user.email}}</div>
+      <div class="column type">{{user.user_type}}</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+.wh-100 {
+    background: #EEF0F8 0% 0% no-repeat padding-box;
+    width: calc(100vw - 92px);
+    height: calc(100vh - 112px);
+    flex-flow: column;
+    padding: 56px 46px;
+
+    .messages-row {
+        height: 56px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .data-row {
+        margin-top: 11px;
+        height: calc(100% - 56px - 11px);
+        width: 100%;
+        display: flex;
+        gap: 0 26px;
+
+        .left {
+            width: calc(100% - 580px - 26px);
+            flex-flow: column;
+
+            .button-row {
+                display: flex;
+                width: 100%;
+                margin-bottom: 16px;
+
+                app-button {
+                    margin-left: auto;
+                }
+            }
+
+            .datatable {
+                height: calc(100% - 16px - 36px);
+                width: 100%;
+            }
+        }
+
+        .right {
+            width: 580px;
+            height: 100%;
+            padding-top: 62px;
+        }
+    }
+
+}

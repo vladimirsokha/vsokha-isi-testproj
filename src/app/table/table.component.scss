@@ -1,0 +1,70 @@
+.datatable-wrapper {
+    width: 100%;
+    height: 100%;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 30px #523F690D;
+    border: 1px solid #EBEDF3;
+    border-radius: 6px;
+
+    .column {
+        &:first-child {
+            margin-left: 26px;
+        }
+
+        height: 55px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: left;
+
+        &.username {
+            width: 18%;
+        }
+
+        &.first_name, &.last_name {
+            width: 18.5%;
+        }
+
+        &.email {
+            width: 25%;
+        }
+
+        &.type {
+            width: 20%;
+        }
+    }
+
+    .datatable-header {
+        display: flex;
+
+        .column {
+            
+            font: normal normal bold 13px/16px Helvetica;
+            color: #A4A4B5;
+            text-transform: uppercase;
+        }
+    }
+
+    .datatable-data {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        max-height: calc(100% - 55px);
+
+        .row {
+            display: flex;
+            cursor: pointer;
+            background: #F4F5F8 0% 0% no-repeat padding-box;
+            transition: 0.3s ease-in-out;
+
+            &:hover {
+                background: #EFF0F4 0% 0% no-repeat padding-box;
+            }
+
+            .column {
+                font: normal normal normal 13px/16px Helvetica;
+                color: #3F4254;
+            }
+        }
+    }
+}

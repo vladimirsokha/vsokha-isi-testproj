@@ -1,0 +1,21 @@
+.button-wrapper {
+    width: 120px;
+    height: 46px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: normal normal normal 14px/17px Helvetica;
+    color: #FFFFFF;
+    cursor: pointer;
+
+    &.default {
+        background: #2E8FF0 0% 0% no-repeat padding-box;
+        box-shadow: 0px 5px 8px #2E8FF029;
+    }
+
+    &.delete {
+        background: #F44682 0% 0% no-repeat padding-box;
+        box-shadow: 0px 5px 8px #F4468229;
+    }
+}
