@@ -1,6 +1,6 @@
 <div class="user-wrapper">
   <div class="user-header">
-    <div class="title">Create new user</div>
+    <div class="title">{{userId === 'new' ? 'Create new user' : this.userForm.get('first_name')?.value + ' ' + this.userForm.get('last_name')?.value}}</div>
     <img src="../../assets/close.svg" alt="Close icon" [routerLink]="'/'">
   </div>
 

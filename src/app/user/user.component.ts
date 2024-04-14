@@ -78,11 +78,12 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   createUser(): void {
-    console.log(this.userForm);
     if (this.userForm.valid) {
       const userId = this.userService.addUser(this.generateUserPayload());
       this.messageService.messageSubject.next({type: MessageEnum.SUCCESS, message: 'Success! User added.'});
-      this.router.navigate([`/${userId}`]);
+      setTimeout(() => {
+        this.router.navigate([`/${userId}`]);
+      }, 0);
     } else {
       this.messageService.messageSubject.next({type: MessageEnum.ERROR, message: 'Error! User data is not valid.'});
     }
@@ -131,7 +132,6 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   checkUniqieName: ValidatorFn = (group: AbstractControl):  Observable<ValidationErrors|null> => { 
-    console.log(this.usersList.some(user => user.username === this.userForm.get('username')?.value));
     return this.usersList.some(user => user.username === this.userForm.get('username')?.value) ? of({ usernameExists: true }) :  of(null)
   }
 }
